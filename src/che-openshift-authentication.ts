@@ -13,27 +13,24 @@ import * as che from '@eclipse-che/plugin';
 import { spawn } from 'child_process';
 
 export async function start(context: theia.PluginContext) {
-    if (! await isLoggedIn()) {
+    const oAuthProviders = await che.oAuth.getProviders();
+    if (oAuthProviders.indexOf('openshift') == -1) {
+        return;
+    }
+
+    const isLoggedIn: boolean = await isLoggedInFunc();
+    const isAuthenticated: boolean = await che.oAuth.isAuthenticated('openshift');
+
+    if (!isLoggedIn && !isAuthenticated) {
         const action = await theia.window.showWarningMessage(`The OpenShift plugin is not authorized, would you like to authenticate?`, 'Yes', 'No');
         if (action == 'Yes') {
-            let error = '';
-            const server = await getServerUrl();
-            const token = await che.openshift.getToken();
-            const osCommand = spawn('oc', ['login', server, '--certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt', '--token', token]);
-            osCommand.stderr.on('data', data => {
-                error += data
-            });
-            osCommand.on('close', (code: number | null) => {
-                code = code === null ? 0 : code;
-                if (code === 0) {
-                    theia.window.showInformationMessage('OpenShift connector plugin successfully authenticated');
-                } else {
-                    theia.window.showErrorMessage('Failed to authenticated the OpenShift connector plugin: ' + error);
-                }
-            });
+            await ocLogIn();
         }
+    } else if (!isLoggedIn) {
+        await ocLogIn();
     }
-    function isLoggedIn(): Promise<boolean> {
+
+    function isLoggedInFunc(): Promise<boolean> {
         return new Promise<boolean>(resolve => {
             let result = '';
             const whoamiCommand = spawn('oc', ['whoami']);
@@ -44,9 +41,30 @@ export async function start(context: theia.PluginContext) {
                 resolve(false);
             });
             whoamiCommand.on('close', () => {
-                resolve(result != 'system:serviceaccount:che:che-workspace');
+                resolve(!result.includes('system:serviceaccount:che:che-workspace'));
             });
         })
+    }
+
+    async function ocLogIn(): Promise<void> {
+        let error = '';
+        const server = await getServerUrl();
+        const token = await che.openshift.getToken();
+        const osCommand = spawn('oc', ['login', server, '--certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt', '--token', token]);
+        osCommand.stderr.on('data', data => {
+            error += data
+        });
+        osCommand.on('close', (code: number | null) => {
+            code = code === null ? 0 : code;
+            if (code === 0) {
+                if (isAuthenticated) {
+                    return;
+                }
+                theia.window.showInformationMessage('OpenShift connector plugin is successfully authenticated');
+            } else {
+                theia.window.showErrorMessage('Failed to authenticated the OpenShift connector plugin: ' + error);
+            }
+        });
     }
 
     function getServerUrl(): Promise<string> {
