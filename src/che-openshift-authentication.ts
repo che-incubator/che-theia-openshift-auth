@@ -13,9 +13,18 @@ import * as che from '@eclipse-che/plugin';
 import { spawn } from 'child_process';
 
 export async function start(context: theia.PluginContext) {
-    const oAuthProviders = await che.oAuth.getProviders();
-    if (oAuthProviders.indexOf('openshift') == -1) {
-        return;
+    const machineToken = process.env['CHE_MACHINE_TOKEN'];
+    const isMultiUser = !!(machineToken && machineToken.length > 0);
+    // getProviders method is not supported for multi-user Mode
+    if (isMultiUser) {
+        if (!await che.oAuth.isRegistered('openshift-v3') || !await che.oAuth.isRegistered('openshift-v4')) {
+            return
+        }
+    } else {
+        const oAuthProviders = await che.oAuth.getProviders();
+        if (oAuthProviders.indexOf('openshift') == -1) {
+            return;
+        }
     }
 
     const isLoggedIn: boolean = await isLoggedInFunc();
