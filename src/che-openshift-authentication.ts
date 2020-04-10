@@ -32,7 +32,7 @@ export async function start(context: theia.PluginContext) {
 
     if (!isLoggedIn && !isAuthenticated) {
         const action = await theia.window.showWarningMessage(`The OpenShift plugin is not authorized, would you like to authenticate?`, 'Yes', 'No');
-        if (action == 'Yes') {
+        if (action === 'Yes') {
             await ocLogIn();
         }
     } else if (!isLoggedIn) {
