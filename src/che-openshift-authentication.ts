@@ -57,9 +57,17 @@ export async function start(context: theia.PluginContext) {
     }
 
     async function ocLogIn(): Promise<void> {
+        const errorMessage = 'Failed to authenticated the OpenShift connector plugin: ';
         let error = '';
-        const server = await getServerUrl();
-        const token = await che.openshift.getToken();
+        let server = '';
+        let token = '';
+        try {
+            server = await getServerUrl();
+            token = await che.openshift.getToken();
+        } catch (e) {
+            theia.window.showErrorMessage(errorMessage + e);
+            return;
+        }
         const osCommand = spawn('oc', ['login', server, '--certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt', '--token', token]);
         osCommand.stderr.on('data', data => {
             error += data
@@ -72,26 +80,30 @@ export async function start(context: theia.PluginContext) {
                 }
                 theia.window.showInformationMessage('OpenShift connector plugin is successfully authenticated');
             } else {
-                theia.window.showErrorMessage('Failed to authenticated the OpenShift connector plugin: ' + error);
+                theia.window.showErrorMessage(errorMessage + error);
             }
         });
     }
 
     function getServerUrl(): Promise<string> {
-        return new Promise<string>(resolve => {
+        return new Promise<string>((resolve, reject) => {
             let result = '';
             const versionCommand = spawn('odo', ['version']);
             // tslint:disable-next-line:no-any
-            versionCommand.stdout.on('data', (data: any) => {
+            versionCommand.stdout.on('data', data => {
                 result += data.toString();
             });
             // tslint:disable-next-line:no-any
-            versionCommand.stderr.on('data', (data: any) => {
-                resolve('');
+            versionCommand.stderr.on('data', data => {
+                reject(data)
             });
-            versionCommand.on('close', (code: number | null) => {
-                const server: string = result.substring(result.indexOf('Server: ') + 8, result.indexOf('Kubernetes: ') - 1);
-                resolve(server);
+            versionCommand.on('close', () => {
+                const match = result.match(/https?:\/\/(www.)?[-a-zA-Z0-9.[a-z]([-a-zA-Z0-9@:%_+.~#?&/=]*)/g);
+                if (match && match.length === 1) {
+                    resolve(match[0]);
+                } else {
+                    reject('Failed to get the server url');
+                }
             });
         })
     }
