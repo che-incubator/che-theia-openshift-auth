@@ -8,9 +8,9 @@
   integrity sha512-4CgKEGCBOIOBGBNoH0dhN8TkP1Sj39fG4LGCXYw3JB7nQucVooJyq7AhIV+w7L4iZ+ln+y2KEfZugCmOIuzIeQ==
 
 "@eclipse-che/plugin@latest":
-  version "0.0.1-1586429785"
-  resolved "https://registry.yarnpkg.com/@eclipse-che/plugin/-/plugin-0.0.1-1586429785.tgz#6dea7faca00c261a9f14f45fd8398205f4948f62"
-  integrity sha512-C7VVc/XMPr52een6KIXnDCjZiOcelPTqy1uj2HcSOmBEpc/aXscIrpF8UE9UN+V5rr3GUlYlYGWJqTQFMjeILw==
+  version "0.0.1-1594040164"
+  resolved "https://registry.yarnpkg.com/@eclipse-che/plugin/-/plugin-0.0.1-1594040164.tgz#5501b9a032d989dd65dc32bc8044f61d6a6682f7"
+  integrity sha512-QOwu77veHvBmI/w1s8utCqa2mKUqEgIRgIByXQZsVO7Ba7GVqcnPRU/t4kSrKW41y525uHlkJor2iTk++ie3eQ==
   dependencies:
     "@eclipse-che/api" latest
 
@@ -135,6 +135,13 @@ atob@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
+
+axios@0.19.2:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
+  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
+  dependencies:
+    follow-redirects "1.5.10"
 
 balanced-match@^1.0.0:
   version "1.0.0"
@@ -500,6 +507,13 @@ find-up@^3.0.0:
   integrity sha512-1yD6RmLI1XBfxugvORwlck6f75tYL+iR0jqwsOrOxMZyGYqUuDhJ0l4AXdO1iX/FTs9cBAMEk1gWSEx1kSbylg==
   dependencies:
     locate-path "^3.0.0"
+
+follow-redirects@1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
+  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
+  dependencies:
+    debug "=3.1.0"
 
 for-in@^1.0.2:
   version "1.0.2"

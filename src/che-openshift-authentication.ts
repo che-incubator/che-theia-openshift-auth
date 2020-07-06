@@ -11,10 +11,26 @@
 import * as theia from '@theia/plugin';
 import * as che from '@eclipse-che/plugin';
 import { spawn } from 'child_process';
+import axios, { AxiosInstance } from 'axios';
+
+interface Attributes {
+    cluster: string
+}
+
+interface Data {
+    attributes: Attributes
+}
+
+interface OsUserResponse {
+    data: Data[]
+}
 
 export async function start(context: theia.PluginContext) {
     const machineToken = process.env['CHE_MACHINE_TOKEN'];
     const isMultiUser = !!(machineToken && machineToken.length > 0);
+    const axiosInstance: AxiosInstance = axios;
+    const cheApi = process.env['CHE_API'];
+    const isHostedChe = cheApi && cheApi.indexOf('https://che.openshift.io/api') !== -1;
     // getProviders method is not supported for multi-user Mode
     if (isMultiUser) {
         if (!await che.oAuth.isRegistered('openshift-v3') && !await che.oAuth.isRegistered('openshift-v4')) {
@@ -86,7 +102,13 @@ export async function start(context: theia.PluginContext) {
     }
 
     function getServerUrl(): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<string>(async (resolve, reject) => {
+            if (isHostedChe) {
+                const user = await che.user.getCurrentUser();
+                const osUserResponse = await axiosInstance.get<OsUserResponse>('https://api.openshift.io/api/users?filter[username]=' + user.name);
+                resolve(osUserResponse.data.data[0].attributes.cluster);
+                return;
+            }
             let result = '';
             const versionCommand = spawn('odo', ['version']);
             // tslint:disable-next-line:no-any
