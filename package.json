@@ -12,14 +12,16 @@
   "activationEvents": [
     "*"
   ],
+  "dependencies": {
+    "axios": "0.19.2"
+  },
   "devDependencies": {
     "@eclipse-che/plugin": "latest",
     "@theia/plugin": "next",
     "@theia/plugin-packager": "latest",
     "rimraf": "2.6.2",
-    "typescript-formatter": "7.2.2",
     "typescript": "~3.9.2",
-    "axios": "0.19.2"
+    "typescript-formatter": "7.2.2"
   },
   "scripts": {
     "prepare": "yarn run clean && yarn run build",
