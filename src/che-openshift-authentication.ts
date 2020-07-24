@@ -87,7 +87,11 @@ export async function start(context: theia.PluginContext) {
             theia.window.showErrorMessage(errorMessage + e);
             return;
         }
-        const osCommand = spawn('oc', ['login', server, '--certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt', '--token', token]);
+        const args = ['login', server, '--token', token];
+        if (!isHostedChe) {
+            args.push('--certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt');
+        }
+        const osCommand = spawn('oc', args);
         osCommand.stderr.on('data', data => {
             error += data
         });
