@@ -31,6 +31,10 @@ export async function start(context: theia.PluginContext) {
     const axiosInstance: AxiosInstance = axios;
     const cheApi = process.env['CHE_API'];
     const isHostedChe = cheApi && cheApi.indexOf('https://che.openshift.io/api') !== -1;
+    const isLoggedIn: boolean = await isLoggedInFunc();
+    if (isLoggedIn) {
+        return;
+    }
     // getProviders method is not supported for multi-user Mode
     if (isMultiUser) {
         if (!await che.oAuth.isRegistered('openshift-v3') && !await che.oAuth.isRegistered('openshift-v4')) {
@@ -43,16 +47,15 @@ export async function start(context: theia.PluginContext) {
         }
     }
 
-    const isLoggedIn: boolean = await isLoggedInFunc();
     const isAuthenticated: boolean = isMultiUser ? await che.oAuth.isAuthenticated('openshift-v3') ||
         await che.oAuth.isAuthenticated('openshift-v4') : await che.oAuth.isAuthenticated('openshift');
 
-    if (!isLoggedIn && !isAuthenticated) {
+    if (!isAuthenticated) {
         const action = await theia.window.showWarningMessage(`The OpenShift plugin is not authorized, would you like to authenticate?`, 'Yes', 'No');
         if (action === 'Yes') {
             await ocLogIn();
         }
-    } else if (!isLoggedIn) {
+    } else {
         await ocLogIn();
     }
 
@@ -84,7 +87,11 @@ export async function start(context: theia.PluginContext) {
             theia.window.showErrorMessage(errorMessage + e);
             return;
         }
-        const osCommand = spawn('oc', ['login', server, '--certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt', '--token', token]);
+        const args = ['login', server, '--token', token];
+        if (!isHostedChe) {
+            args.push('--certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt');
+        }
+        const osCommand = spawn('oc', args);
         osCommand.stderr.on('data', data => {
             error += data
         });
