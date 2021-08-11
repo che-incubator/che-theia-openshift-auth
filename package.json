@@ -33,11 +33,12 @@
   },
   "engines": {
     "theiaPlugin": "next",
-    "vscode": "0.10.5"
+    "vscode": "^1.34.0"
   },
   "repository": {
     "url": "https://github.com/che-incubator/che-theia-openshift-auth.git"
   },
+  "main": "./lib/che-openshift-authentication.js",
   "theiaPlugin": {
     "backend": "lib/che-openshift-authentication.js"
   }
