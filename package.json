@@ -1,45 +1,39 @@
 {
-  "name": "che-openshift-authentication-plugin",
-  "publisher": "che-theia",
-  "keywords": [
-    "theia-plugin"
-  ],
-  "version": "0.0.1",
-  "license": "EPL-2.0",
-  "files": [
-    "src"
-  ],
-  "activationEvents": [
-    "*"
-  ],
-  "dependencies": {
-    "axios": "0.19.2"
-  },
-  "devDependencies": {
-    "@eclipse-che/plugin": "latest",
-    "@theia/plugin": "next",
-    "@theia/plugin-packager": "latest",
-    "rimraf": "2.6.2",
-    "typescript": "~3.9.2",
-    "typescript-formatter": "7.2.2"
-  },
-  "scripts": {
-    "prepare": "yarn run clean && yarn run build",
-    "clean": "rimraf lib",
-    "format-code": "tsfmt -r",
-    "watch": "tsc -watch",
-    "compile": "tsc",
-    "build": "yarn run format-code && yarn run compile"
-  },
-  "engines": {
-    "theiaPlugin": "next",
-    "vscode": "^1.34.0"
-  },
-  "repository": {
-    "url": "https://github.com/che-incubator/che-theia-openshift-auth.git"
-  },
-  "main": "./lib/che-openshift-authentication.js",
-  "theiaPlugin": {
-    "backend": "lib/che-openshift-authentication.js"
-  }
+	"name": "che-openshift-authentication-plugin",
+	"publisher": "che-theia",
+	"keywords": [
+		"theia-plugin"
+	],
+	"displayName": "helloworld-sample",
+	"description": "HelloWorld example for VS Code",
+	"version": "0.0.1",
+	"repository": {
+		"url": "https://github.com/che-incubator/che-theia-openshift-auth.git"
+	},
+	"engines": {
+		"vscode": "^1.34.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/che-openshift-authentication.js",
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint . --ext .ts,.tsx",
+		"watch": "tsc -watch -p ./"
+	},
+	"dependencies": {
+		"axios": "0.19.2"
+	},
+	"devDependencies": {
+		"@eclipse-che/plugin": "latest",
+		"@theia/plugin": "next",
+		"@theia/plugin-packager": "latest",
+		"rimraf": "2.6.2",
+		"typescript": "^4.2.2"
+	}
 }
