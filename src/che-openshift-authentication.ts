@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  **********************************************************************/
 
-import * as theia from '@theia/plugin';
+import * as vscode from 'vscode';
 import * as che from '@eclipse-che/plugin';
 import { spawn } from 'child_process';
 import axios, { AxiosInstance } from 'axios';
@@ -25,7 +25,7 @@ interface OsUserResponse {
     data: Data[]
 }
 
-export async function start(context: theia.PluginContext) {
+export async function start(context: vscode.ExtensionContext) {
     const machineToken = process.env['CHE_MACHINE_TOKEN'];
     const isMultiUser = !!(machineToken && machineToken.length > 0);
     const axiosInstance: AxiosInstance = axios;
@@ -51,7 +51,7 @@ export async function start(context: theia.PluginContext) {
         await che.oAuth.isAuthenticated('openshift-v4') : await che.oAuth.isAuthenticated('openshift');
 
     if (!isAuthenticated) {
-        const action = await theia.window.showWarningMessage(`The OpenShift plugin is not authorized, would you like to authenticate?`, 'Yes', 'No');
+        const action = await vscode.window.showWarningMessage(`The OpenShift plugin is not authorized, would you like to authenticate?`, 'Yes', 'No');
         if (action === 'Yes') {
             await ocLogIn();
         }
@@ -84,7 +84,7 @@ export async function start(context: theia.PluginContext) {
             server = await getServerUrl();
             token = await che.openshift.getToken();
         } catch (e) {
-            theia.window.showErrorMessage(errorMessage + e);
+            vscode.window.showErrorMessage(errorMessage + e);
             return;
         }
         const args = ['login', server, '--token', token];
@@ -101,9 +101,9 @@ export async function start(context: theia.PluginContext) {
                 if (isAuthenticated) {
                     return;
                 }
-                theia.window.showInformationMessage('OpenShift connector plugin is successfully authenticated');
+                vscode.window.showInformationMessage('OpenShift connector plugin is successfully authenticated');
             } else {
-                theia.window.showErrorMessage(errorMessage + error);
+                vscode.window.showErrorMessage(errorMessage + error);
             }
         });
     }
