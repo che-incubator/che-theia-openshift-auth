@@ -1,45 +1,39 @@
 {
   "name": "che-openshift-authentication-plugin",
+  "displayName": "Openshift authentication tool",
+  "description": "Authenticates to Openshift using oAuth",
+  "version": "0.0.3",
   "publisher": "che-theia",
-  "keywords": [
-    "theia-plugin"
-  ],
-  "version": "0.0.2",
-  "license": "EPL-2.0",
-  "files": [
-    "src"
+  "repository": "https://github.com/che-incubator/che-theia-openshift-auth",
+  "engines": {
+    "vscode": "^1.34.0"
+  },
+  "categories": [
+    "Other"
   ],
   "activationEvents": [
     "*"
   ],
+  "main": "./out/che-openshift-authentication.js",
+  "scripts": {
+    "prepare": "yarn run clean && yarn run build",
+    "clean": "rimraf lib",
+    "build": "yarn run format-code && yarn run compile",
+    "compile": "tsc -p ./",
+    "format-code": "tsfmt -r",
+    "watch": "tsc -watch -p ./"
+  },
   "dependencies": {
     "axios": "0.19.2"
   },
   "devDependencies": {
     "@eclipse-che/plugin": "latest",
-    "@theia/plugin": "next",
-    "@theia/plugin-packager": "latest",
-    "rimraf": "2.6.2",
-    "typescript": "~3.9.2",
+    "@types/node": "^12.12.0",
+    "@types/vscode": "^1.34.0",
+    "@typescript-eslint/eslint-plugin": "^4.16.0",
+    "@typescript-eslint/parser": "^4.16.0",
+    "eslint": "^7.21.0",
+    "typescript": "^4.2.2",
     "typescript-formatter": "7.2.2"
-  },
-  "scripts": {
-    "prepare": "yarn run clean && yarn run build",
-    "clean": "rimraf lib",
-    "format-code": "tsfmt -r",
-    "watch": "tsc -watch",
-    "compile": "tsc",
-    "build": "yarn run format-code && yarn run compile"
-  },
-  "engines": {
-    "theiaPlugin": "next",
-    "vscode": "^1.34.0"
-  },
-  "repository": {
-    "url": "https://github.com/che-incubator/che-theia-openshift-auth.git"
-  },
-  "main": "./lib/che-openshift-authentication.js",
-  "theiaPlugin": {
-    "backend": "lib/che-openshift-authentication.js"
   }
 }
